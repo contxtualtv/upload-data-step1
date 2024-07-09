@@ -294,7 +294,6 @@ def process_batch(product_batch, session):
                     'genderId': gender_ids.get(normalize_gender(product['gender']), None),
                     'retailerId': product['retailerId'],
                     'originalProductId': product['productId'],
-                    'clipUploading': 0
                 } for product in products_to_insert]
 
 
