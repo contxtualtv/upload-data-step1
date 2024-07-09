@@ -261,10 +261,6 @@ def process_batch(product_batch, session):
     gender_set = set()
 
     for product in all_products:
-        if 'retailerId' in product:
-            product['retailerId'] = retailer_id
-        if 'streamerId' in product:
-            product['streamerId'] = streamer_id
         if 'category' in product:
             category_set.add(product['category'])
         if 'subCategory' in product:
