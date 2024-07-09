@@ -261,6 +261,10 @@ def process_batch(retailer_id, streamer_id, product_batch, session):
     gender_set = set()
 
     for product in all_products:
+        if 'retailerId' in product:
+            product['retailerId'] = retailer_id
+        if 'streamerId' in product:
+            product['streamerId'] = streamer_id
         if 'category' in product:
             category_set.add(product['category'])
         if 'subCategory' in product:
@@ -294,6 +298,7 @@ def process_batch(retailer_id, streamer_id, product_batch, session):
                     'genderId': gender_ids.get(normalize_gender(product['gender']), None),
                     'retailerId': retailer_id,
                     'originalProductId': product['productId'],
+                    'clipUploading': 0
                 } for product in products_to_insert]
 
 
@@ -338,18 +343,8 @@ def process_data():
             print("No data provided")
             return jsonify({"error": "No data provided"}), 400
 
-        # Parse the first line separately for retailer and streamer IDs
-        general_info = json.loads(lines[0])
-        print("General info:", general_info)
-        retailer_id = general_info.get('retailerId')
-        streamer_id = general_info.get('streamerId')
-
-        if not retailer_id or not streamer_id:
-            print("Missing retailerId or streamerId")
-            return jsonify({"error": "Missing retailerId or streamerId"}), 400
-
         # The remaining lines are product data
-        products = [json.loads(line) for line in lines[1:]]
+        products = [json.loads(line) for line in lines]
 
         # Now you can proceed to process these products
         session = Session()
