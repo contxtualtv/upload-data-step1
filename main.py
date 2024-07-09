@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from models import Product, Gender, ProductCategory, Brand, Color, ProductImage  # Models using SQLAlchemy ORM
 import os
 import json
-from dotenv import load_dotenv
 from sqlalchemy.sql import text  # Import the text function for SQL expressions
 import unicodedata
 from sqlalchemy.exc import SQLAlchemyError  # Import SQLAlchemyError
@@ -13,7 +12,6 @@ from sqlalchemy.exc import SQLAlchemyError  # Import SQLAlchemyError
 
 app = Flask(__name__)
 
-load_dotenv()  # This loads the environment variables from the .env file
 
 # Now access your environment variables
 MYSQL_HOST = os.getenv('MYSQL_HOST')
