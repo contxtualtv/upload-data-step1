@@ -248,7 +248,7 @@ def update_products(products_to_update, brand_ids, gender_ids, session):
 
 
 
-def process_batch(retailer_id, streamer_id, product_batch, session):
+def process_batch(product_batch, session):
 
     result = check_new_products(product_batch, session)
     products_to_insert = result['productsToInsert']
@@ -349,7 +349,7 @@ def process_data():
         # Now you can proceed to process these products
         session = Session()
         try:
-            results = process_batch(retailer_id, streamer_id, products, session)
+            results = process_batch(products, session)
             session.commit()
             print("Data processed successfully")
             return jsonify({"results": "Data processed successfully", "details": results}), 200
