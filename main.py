@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models import Product, Gender, ProductCategory, Brand, Color, ProductImage  # Models using SQLAlchemy ORM
