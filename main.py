@@ -314,9 +314,9 @@ def process_batch(product_batch, session):
             
 
             s.commit() 
-        print("product inserted: ", products_to_insert + "product updated" + products_to_update)
+        print("product inserted: ", products_to_insert, "product updated", products_to_update)
         return products_to_insert + products_to_update
-    
+
     except Exception as e:
         print(f"Failed to process data: {str(e)}")
         session.rollback()
