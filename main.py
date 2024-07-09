@@ -12,7 +12,6 @@ from sqlalchemy.exc import SQLAlchemyError  # Import SQLAlchemyError
 
 app = Flask(__name__)
 
-
 # Now access your environment variables
 MYSQL_HOST = os.getenv('MYSQL_HOST')
 MYSQL_PORT = os.getenv('MYSQL_PORT')
