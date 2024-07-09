@@ -292,7 +292,7 @@ def process_batch(product_batch, session):
                     'url': product['productUrl'],
                     'brandId': brand_ids.get(product['brandName']),
                     'genderId': gender_ids.get(normalize_gender(product['gender']), None),
-                    'retailerId': retailer_id,
+                    'retailerId': product['retailerId'],
                     'originalProductId': product['productId'],
                     'clipUploading': 0
                 } for product in products_to_insert]
@@ -309,8 +309,6 @@ def process_batch(product_batch, session):
 
             # Combine inserted and updated for final output
             final_datastream = {
-                'retailerId': retailer_id,
-                'streamerId': streamer_id,
                 'data': products_to_insert + products_to_update
             }
 
