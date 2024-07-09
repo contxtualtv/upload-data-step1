@@ -184,7 +184,6 @@ def bulk_insert_products(products, session):
                 genderId=product['genderId'],
                 retailerId=product['retailerId'],
                 originalProductId=product['originalProductId'],
-                clipUploading=0
             )
             for product in products
         ]
