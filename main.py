@@ -24,7 +24,6 @@ if None in [MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT, MYSQL_DB]:
 
 # Build the database URI
 DATABASE_URI = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
-print(f"Database URI: {DATABASE_URI}")
 
 engine = create_engine(DATABASE_URI, echo=True, future=True)
 session_factory = sessionmaker(bind=engine)
