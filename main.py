@@ -82,7 +82,11 @@ def check_new_products(product_batch, session):
                 products_to_update.append(updated_product)
             else:
                 # For new products, just append them to the insert list.
-                products_to_insert.append(product)
+                
+                insert_product = product.copy()
+                insert_product['originalProductId'] = product['productId']
+                insert_product['type'] = 'insert' # Flag to indicate this is a new product to insert
+                products_to_insert.append(insert_product)
 
         return {'productsToInsert': products_to_insert, 'productsToUpdate': products_to_update}
     except Exception as e:
@@ -211,6 +215,7 @@ def update_products(products_to_update, brand_ids, gender_ids, session):
     session (Session): SQLAlchemy session object bound to a transaction.
     """
     try:
+
         # Iterate over each product and update its attributes
         for product in products_to_update:
             # Fetch the product from the database using the provided 'id'
@@ -235,6 +240,8 @@ def update_products(products_to_update, brand_ids, gender_ids, session):
         # Commit the session to save changes
         session.commit()
         print("All products updated successfully.")
+
+
 
     except Exception as e:
         # Rollback in case of any error
@@ -297,26 +304,19 @@ def process_batch(product_batch, session):
 
                 # Bulk insert the products  
                 inserted_products = bulk_insert_products(mapped_products, s)
-                for product, data in zip(inserted_products, mapped_products):
-                    data['id'] = product.id  
-                    data['type'] = 'insert'    
+                for product, data in zip(inserted_products, products_to_insert):
+                    data['id'] = product.id     
                     
             if products_to_update:
                 update_products(products_to_update, brand_ids, gender_ids, s)
 
-            # Combine inserted and updated for final output
-            final_datastream = {
-                'data': products_to_insert + products_to_update
-            }
 
-            # Write to JSON file
-            with open('output_datastream.json', 'w') as f:
-                json.dump(final_datastream, f, indent=4)
             
 
-            s.commit()
-            #return f"Data processed successfully with New: {len(products_to_insert)}, Updated: {len(products_to_update)}"
-        
+            s.commit() 
+        print("product inserted: ", products_to_insert + "product updated" + products_to_update)
+        return products_to_insert + products_to_update
+    
     except Exception as e:
         print(f"Failed to process data: {str(e)}")
         session.rollback()
