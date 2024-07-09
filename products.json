@@ -1,0 +1,44 @@
+{
+    "retailerId": 1,
+    "streamerId": 166,
+    "data": [
+        {
+            "productUrl": "https://www.levi.com/US/en_US/clothing/men/jeans/slim/511-slim-fit-mens-jeans/p/045111432",
+            "productId": 45111432,
+            "gender": "Man",
+            "category": "Clothing",
+            "description": "Think of this modern slim with room to move as not-so-skinny skinny jeans. (If you want the style, but not the feeling, this is a great alternative.) With a streamlined fit that\u2019s narrow through the seat and thigh, the 511 Slim is perfectly calibrated to look good with everything\u2014without looking like you\u2019re trying too hard.The definitive slim jeansNarrow through the thigh, but not narrow enough to keep you from running for the bus or dancing on the rooftopDesigned to fit like they\u2019ve been tailored just for youFinished with our iconic arcuate stitchingMade with Comfort Stretch which features a hint of stretch for all-day comfortHold the H2O: This garment was made using recycled water",
+            "subCategory": "Men",
+            "productName": "511\u2122 Slim Fit Men's Jeans",
+            "brandName": "Levi's",
+            "colors": [
+                {
+                    "Blue Stone - Light Wash - Stretch": {
+                        "images": [
+                            "https://lsco.scene7.com/is/image/lsco/045111432-front-pdp?$onmodelfront$",
+                            "https://lsco.scene7.com/is/image/lsco/045111432-amazonguide?$qv_desktop$",
+                            "https://lsco.scene7.com/is/image/lsco/045111432-side-pdp?$onmodelwaistdownside$",
+                            "https://lsco.scene7.com/is/image/lsco/045111432-back-pdp?$onmodelwaistdownback$"
+                        ],
+                        "gcp": [
+                            "gs://contxtual-web-data-parser/Levis/045111432-front-pdp?$onmodelfront$",
+                            "gs://contxtual-web-data-parser/Levis/045111432-amazonguide?$qv_desktop$",
+                            "gs://contxtual-web-data-parser/Levis/045111432-side-pdp?$onmodelwaistdownside$",
+                            "gs://contxtual-web-data-parser/Levis/045111432-back-pdp?$onmodelwaistdownback$"
+                        ],
+                        "price": [
+                            {
+                                "actualPrice": "$69.50"
+                            },
+                            {
+                                "salePrice": "$54.98"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "website": "Levi's"
+        }
+    ]
+    
+}
