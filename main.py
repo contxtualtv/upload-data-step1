@@ -248,10 +248,7 @@ def update_products(products_to_update, brand_ids, gender_ids, session):
 
 
 
-def process_batch(datastream, session):
-    retailer_id = datastream.get('retailerId')
-    streamer_id = datastream.get('streamerId')
-    product_batch = datastream.get('data', [])
+def process_batch(retailer_id, streamer_id, product_batch, session):
 
     result = check_new_products(product_batch, session)
     products_to_insert = result['productsToInsert']
@@ -334,21 +331,38 @@ def process_batch(datastream, session):
 
 @app.route('/', methods=['POST'])
 def process_data():
-    datastream = request.json
-    if not datastream:
-        print("No data provided")
-        return {"error": "No data provided"}, 400
-
-    session = Session()
+    # Attempt to read lines from the request's body
     try:
-        results = process_batch(datastream, session)
-        session.commit()
-        return {"results": "Data processed successfully", "details": results}, 200
+        lines = request.data.decode('utf-8').splitlines()
+        if not lines:
+            return jsonify({"error": "No data provided"}), 400
+
+        # Parse the first line separately for retailer and streamer IDs
+        general_info = json.loads(lines[0])
+        retailer_id = general_info.get('retailerId')
+        streamer_id = general_info.get('streamerId')
+
+        if not retailer_id or not streamer_id:
+            return jsonify({"error": "Missing retailerId or streamerId"}), 400
+
+        # The remaining lines are product data
+        products = [json.loads(line) for line in lines[1:]]
+
+        # Now you can proceed to process these products
+        session = Session()
+        try:
+            results = process_batch(retailer_id, streamer_id, products, session)
+            session.commit()
+            return jsonify({"results": "Data processed successfully", "details": results}), 200
+        except Exception as e:
+            session.rollback()
+            return jsonify({"error": f"Failed to process data: {str(e)}"}), 500
+        finally:
+            session.close()
+    except json.JSONDecodeError as e:
+        return jsonify({"error": f"Invalid JSON format: {str(e)}"}), 400
     except Exception as e:
-        session.rollback()
-        return {"error": f"Failed to process data: {str(e)}"}, 500
-    finally:
-        session.close()
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
 if __name__ == '__main__':
