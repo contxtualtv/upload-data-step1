@@ -8,6 +8,10 @@ from sqlalchemy.sql import text  # Import the text function for SQL expressions
 import unicodedata
 from sqlalchemy.exc import SQLAlchemyError  # Import SQLAlchemyError
 
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
 
 
 app = Flask(__name__)
@@ -256,6 +260,7 @@ def update_products(products_to_update, brand_ids, gender_ids, session):
 def process_batch(product_batch, session):
 
     result = check_new_products(product_batch, session)
+    print("check new products: ", result, len(result['productsToInsert']), len(result['productsToUpdate']))
     products_to_insert = result['productsToInsert']
     products_to_update = result['productsToUpdate']
 
@@ -305,6 +310,7 @@ def process_batch(product_batch, session):
                 # Bulk insert the products  
                 inserted_products = bulk_insert_products(mapped_products, s)
                 for product, data in zip(inserted_products, products_to_insert):
+                    print("product id: ", product)
                     data['id'] = product.id     
                     
             if products_to_update:
@@ -329,6 +335,7 @@ def process_batch(product_batch, session):
 def process_data():
     # Attempt to read lines from the request's body
     try:
+        print("Request data: ", request.data)
         lines = request.data.decode('utf-8').splitlines()
         if not lines:
             print("No data provided")
@@ -346,6 +353,7 @@ def process_data():
             return jsonify({"results": "Data processed successfully", "details": results}), 200
         except Exception as e:
             session.rollback()
+            
             print(f"Failed to process data: {str(e)}")
             return jsonify({"error": f"Failed to process data: {str(e)}"}), 500
         finally:
