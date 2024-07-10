@@ -164,11 +164,17 @@ def bulk_insert_colors(colors, session: Session):
         raise e
     return unique_color_names
 
-def get_gender_ids(gender_set, session):
-    # This function would fetch gender IDs based on the normalized gender set or use a predefined dictionary
-    # Example dictionary for illustration
-    return {gender: i+1 for i, gender in enumerate(gender_set)}  # Placeholder example
-
+def get_gender_ids(gender_set):
+    # Hardcoded gender IDs based on your specific requirements
+    gender_id_map = {
+        'female': 1,
+        'male': 3,
+        'none': 4,
+        'unisex': 7,
+        'baby': 8,
+        'kids': 9
+    }
+    return {gender: gender_id_map.get(gender, 4) for gender in gender_set}  # Default to 'none' ID if not found
 
 def bulk_insert_products(products, session):
     """
@@ -221,6 +227,7 @@ def update_products(products_to_update, brand_ids, gender_ids, session):
     try:
 
         # Iterate over each product and update its attributes
+
         for product in products_to_update:
             # Fetch the product from the database using the provided 'id'
             prod = session.query(Product).filter_by(id=product['id']).one()
@@ -289,7 +296,7 @@ def process_batch(product_batch, session):
             brand_ids = bulk_insert_brands(brand_set, s)
             bulk_insert_colors(color_set, s)
 
-            gender_ids = get_gender_ids(gender_set, s)
+            gender_ids = get_gender_ids(gender_set)
 
 
             if products_to_insert:
@@ -350,7 +357,7 @@ def process_data():
             results = process_batch(products, session)
             session.commit()
             print("Data processed successfully")
-            return jsonify({"results": "Data processed successfully", "details": results}), 200
+            return jsonify({"results": results}), 200
         except Exception as e:
             session.rollback()
             
