@@ -98,10 +98,10 @@ def check_new_products(product_batch, session):
         raise e
 
 def bulk_insert_categories(categories, session: Session):
-    unique_category_names = set(categories)
+    unique_category_names = {category.lower() for category in categories}
     try:
         existing_categories = session.query(ProductCategory).filter(ProductCategory.name.in_(list(unique_category_names))).all()
-        existing_category_names = {category.name for category in existing_categories}
+        existing_category_names = {category.name.lower() for category in existing_categories}
 
         new_categories = [{'name': name} for name in unique_category_names if name not in existing_category_names]
         if new_categories:
@@ -117,13 +117,13 @@ def bulk_insert_categories(categories, session: Session):
     return unique_category_names
 
 def bulk_insert_brands(brands, session):
-    unique_brand_names = set(brands)
+    unique_brand_names = {brand.lower() for brand in brands}
     brand_ids = {}
     
     try:
         # Fetch existing brands from the database
         existing_brands = session.query(Brand).filter(Brand.name.in_(list(unique_brand_names))).all()
-        existing_brand_dict = {brand.name: brand.id for brand in existing_brands}
+        existing_brand_dict = {brand.name.lower(): brand.id for brand in existing_brands}
         brand_ids.update(existing_brand_dict)
         
         # Determine new brands that need to be inserted
@@ -146,10 +146,10 @@ def bulk_insert_brands(brands, session):
     return brand_ids
 
 def bulk_insert_colors(colors, session: Session):
-    unique_color_names = set(colors)
+    unique_color_names = {color.lower() for color in colors }  # Normalize and deduplicate color names
     try:
         existing_colors = session.query(Color).filter(Color.name.in_(list(unique_color_names))).all()
-        existing_color_names = {color.name for color in existing_colors}
+        existing_color_names = {color.name.lower() for color in existing_colors}
 
         new_colors = [{'name': name} for name in unique_color_names if name not in existing_color_names]
         if new_colors:
@@ -201,12 +201,9 @@ def bulk_insert_products(products, session):
             )
             for product in products
         ]
-
-        print("Bulk inserting products...", product_objects)
         # Bulk insert using SQLAlchemy
-        session.bulk_save_objects(product_objects)
-        session.commit()  # Ensure changes are committed
-        print("Bulk insert of products completed.")
+        session.add_all(product_objects)  # Add all product objects to the session
+        session.commit()  # Commit the transaction to insert and retrieve IDs
         return product_objects
     except Exception as e:
         print(f"Failed to bulk insert products: {str(e)}")
@@ -245,8 +242,6 @@ def update_products(products_to_update, brand_ids, gender_ids, session):
             if 'subCategory' in product:
                 prod.subCategory = product['subCategory']
 
-            # Logging for debug purposes
-            print(f"Updated product ID {prod.id}: Title updated to {prod.title}")
 
         # Commit the session to save changes
         session.commit()
@@ -267,7 +262,6 @@ def update_products(products_to_update, brand_ids, gender_ids, session):
 def process_batch(product_batch, session):
 
     result = check_new_products(product_batch, session)
-    print("check new products: ", result, len(result['productsToInsert']), len(result['productsToUpdate']))
     products_to_insert = result['productsToInsert']
     products_to_update = result['productsToUpdate']
 
@@ -317,7 +311,6 @@ def process_batch(product_batch, session):
                 # Bulk insert the products  
                 inserted_products = bulk_insert_products(mapped_products, s)
                 for product, data in zip(inserted_products, products_to_insert):
-                    print("product id: ", product)
                     data['id'] = product.id     
                     
             if products_to_update:
@@ -327,7 +320,6 @@ def process_batch(product_batch, session):
             
 
             s.commit() 
-        print("product inserted: ", products_to_insert, "product updated", products_to_update)
         return products_to_insert + products_to_update
 
     except Exception as e:
@@ -342,7 +334,6 @@ def process_batch(product_batch, session):
 def process_data():
     # Attempt to read lines from the request's body
     try:
-        print("Request data: ", request.data)
         lines = request.data.decode('utf-8').splitlines()
         if not lines:
             print("No data provided")
