@@ -313,7 +313,7 @@ def process_batch(product_batch, session):
                 inserted_products = bulk_insert_products(mapped_products, s)
                 
                 for product, data in zip(inserted_products, products_to_insert):
-                    print(f"Inserted product: {product[0]}")
+                    print(f"Inserted product: {product.__dict__}")
                     data['id'] = product.id 
                     print(f"DataId Inserted product: {data['id']}")    
                     
