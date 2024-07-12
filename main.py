@@ -302,7 +302,7 @@ def process_batch(product_batch, session):
                     'title': product['productName'],
                     'description': product['description'],
                     'url': product['productUrl'],
-                    'brandId': brand_ids.get(product['brandName']),
+                    'brandId': brand_ids.get(product['brandName'].lower()),
                     'genderId': gender_ids.get(normalize_gender(product['gender']), None),
                     'retailerId': product['retailerId'],
                     'originalProductId': product['productId'],
@@ -313,9 +313,7 @@ def process_batch(product_batch, session):
                 inserted_products = bulk_insert_products(mapped_products, s)
                 
                 for product, data in zip(inserted_products, products_to_insert):
-                    print(f"Inserted product: {product[0]}")
                     data['id'] = product.id 
-                    print(f"DataId Inserted product: {data['id']}")    
                     
             if products_to_update:
                 update_products(products_to_update, brand_ids, gender_ids, s)
