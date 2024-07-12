@@ -8,9 +8,10 @@ from sqlalchemy.sql import text  # Import the text function for SQL expressions
 import unicodedata
 from sqlalchemy.exc import SQLAlchemyError  # Import SQLAlchemyError
 
-# from dotenv import load_dotenv
 
-# load_dotenv()
+#from dotenv import load_dotenv
+
+#load_dotenv()
 
 
 
@@ -233,7 +234,7 @@ def update_products(products_to_update, brand_ids, gender_ids, session):
             prod.title = product['productName']
             prod.description = product['description']
             prod.url = product['productUrl']
-            prod.brandId = brand_ids.get(product['brandName'])
+            prod.brandId = brand_ids.get(product['brandName'].lower())
             prod.genderId = gender_ids.get(normalize_gender(product['gender']))
 
             # Optionally update other fields if needed
@@ -277,7 +278,7 @@ def process_batch(product_batch, session):
         if 'subCategory' in product:
             category_set.add(product['subCategory'])
         if 'brandName' in product:
-            brand_set.add(product['brandName'])
+            brand_set.add(product['brandName'].lower())
         for color_dict in product.get('colors', []):
             for color in color_dict.keys():
                 color_set.add(color)
