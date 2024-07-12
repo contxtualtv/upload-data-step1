@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from models import Product, Gender, ProductCategory, Brand, Color, ProductImage  # Models using SQLAlchemy ORM
+from models import Product, ProductCategory, Brand, Color  # Models using SQLAlchemy ORM
 import os
 import json
 from sqlalchemy.sql import text  # Import the text function for SQL expressions
