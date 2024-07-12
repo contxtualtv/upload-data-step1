@@ -118,13 +118,13 @@ def bulk_insert_categories(categories, session: Session):
 
 def bulk_insert_brands(brands, session):
     unique_brand_names = {brand.lower() for brand in brands}
-    brand_ids = {}
+    # brand_ids = {}
     
     try:
         # Fetch existing brands from the database
         existing_brands = session.query(Brand).filter(Brand.name.in_(list(unique_brand_names))).all()
         existing_brand_dict = {brand.name.lower(): brand.id for brand in existing_brands}
-        brand_ids.update(existing_brand_dict)
+        # brand_ids.update(existing_brand_dict)
         
         # Determine new brands that need to be inserted
         new_brands = [Brand(name=name) for name in unique_brand_names if name not in existing_brand_dict]
@@ -134,7 +134,7 @@ def bulk_insert_brands(brands, session):
             session.commit()  # Commit to ensure IDs are generated
             # Update dictionary with new brands and their generated IDs
             for brand in new_brands:
-                brand_ids[brand.name] = brand.id
+                existing_brand_dict[brand.name] = brand.id
             print("Bulk insert new brands completed")
         else:
             print("No new brands to insert")
@@ -143,7 +143,7 @@ def bulk_insert_brands(brands, session):
         print("Failed to bulk insert new brands:", str(e))
         raise e
     
-    return brand_ids
+    return existing_brand_dict
 
 def bulk_insert_colors(colors, session: Session):
     unique_color_names = {color.lower() for color in colors }  # Normalize and deduplicate color names
