@@ -335,17 +335,14 @@ def process_batch(product_batch, session):
 def process_data():
     # Attempt to read lines from the request's body
     try:
-        print("Processing data...", request.data)
-        lines = request.data.decode('utf-8').splitlines()
-        print("lines", lines)
-        if not lines:
+        #lines = request.data.decode('utf-8').splitlines()
+        products = request.json
+        if not products:
             print("No data provided")
             return jsonify({"error": "No data provided"}), 400
 
         # The remaining lines are product data
-        products = [json.loads(line) for line in lines]
-
-        print("Products", products)
+        #products = [json.loads(line) for line in lines]
 
         # Now you can proceed to process these products
         session = Session()
