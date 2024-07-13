@@ -334,6 +334,7 @@ def process_batch(product_batch, session):
 
 @app.route('/', methods=['POST'])
 def process_data():
+    retr
     # Attempt to read lines from the request's body
     try:
         #lines = request.data.decode('utf-8').splitlines()
