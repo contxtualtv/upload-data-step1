@@ -9,26 +9,27 @@ import unicodedata
 from sqlalchemy.exc import SQLAlchemyError  # Import SQLAlchemyError
 
 
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 
-#load_dotenv()
+load_dotenv()
 
 
 
 app = Flask(__name__)
 
 # Now access your environment variables
-POSTGRES_HOST = os.getenv('POSTGRES_HOST')
 POSTGRES_PORT = os.getenv('POSTGRES_PORT')
 POSTGRES_USER = os.getenv('POSTGRES_USER')
 POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 POSTGRES_DB = os.getenv('POSTGRES_DB')
+POSTGRES_INSTANCE_CONNECTION_NAME = os.getenv('POSTGRES_INSTANCE_CONNECTION_NAME')
 
-if None in [POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB]:
+if None in [POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_INSTANCE_CONNECTION_NAME]:
     raise ValueError("Database configuration is incomplete. Please check environment variables.")
 
 # Build the database URI
-DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@/{POSTGRES_DB}?host=/cloudsql/{POSTGRES_INSTANCE_CONNECTION_NAME}"
+
 
 engine = create_engine(DATABASE_URI, echo=True, future=True)
 session_factory = sessionmaker(bind=engine)
