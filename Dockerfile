@@ -7,8 +7,11 @@ WORKDIR /
 COPY requirements.txt .
 
 # Install the required dependencies
-RUN apt-get -y libpq-dev \
-    && pip install --no-cache-dir -r requirements.txt
+RUN apt-get update \
+    && apt-get install -y libpq-dev gcc \
+    && pip install --no-cache-dir -r requirements.txt \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy the rest of the application code into the container
 COPY . .
