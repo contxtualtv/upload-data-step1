@@ -7,7 +7,7 @@ WORKDIR /
 COPY requirements.txt .
 
 # Install the required dependencies
-RUN sudo apt install libpq-dev python3-dev \
+RUN apt install libpq-dev python3-dev \
     && pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code into the container
