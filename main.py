@@ -236,6 +236,7 @@ def update_products(products_to_update, brand_ids, gender_ids, session):
             prod.url = product['productUrl']
             prod.brandId = brand_ids.get(product['brandName'].lower())
             prod.genderId = gender_ids.get(normalize_gender(product['gender']))
+            prod.toDelete = False
 
             # Optionally update other fields if needed
             if 'category' in product:
@@ -306,6 +307,7 @@ def process_batch(product_batch, session):
                     'genderId': gender_ids.get(normalize_gender(product['gender']), None),
                     'retailerId': product['retailerId'],
                     'originalProductId': product['productId'],
+                    'toDelete': False,
                 } for product in products_to_insert]
 
 
