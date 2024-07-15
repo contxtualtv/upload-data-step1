@@ -9,9 +9,9 @@ import unicodedata
 from sqlalchemy.exc import SQLAlchemyError  # Import SQLAlchemyError
 
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 
 
