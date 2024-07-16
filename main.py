@@ -6,7 +6,6 @@ import os
 import json
 import unicodedata
 from sqlalchemy.exc import SQLAlchemyError  # Import SQLAlchemyError
-from google.cloud.sql.connector import Connector
 
 # from dotenv import load_dotenv
 
@@ -16,7 +15,7 @@ from google.cloud.sql.connector import Connector
 
 app = Flask(__name__)
 
-# Now access your environment variables
+POSTGRES_PORT = os.getenv('POSTGRES_PORT')
 POSTGRES_USER = os.getenv('POSTGRES_USER')
 POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 POSTGRES_DB = os.getenv('POSTGRES_DB')
@@ -25,22 +24,11 @@ POSTGRES_INSTANCE_CONNECTION_NAME = os.getenv('POSTGRES_INSTANCE_CONNECTION_NAME
 if None in [POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_INSTANCE_CONNECTION_NAME]:
     raise ValueError("Database configuration is incomplete. Please check environment variables.")
 
-# Initialize Cloud SQL Python connector
-connector = Connector()
+# Build the database URI
+DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@/{POSTGRES_DB}?host=/cloudsql/{POSTGRES_INSTANCE_CONNECTION_NAME}"
 
-# Function to use the connector to establish the connection
-def getconn():
-    conn = connector.connect(
-        POSTGRES_INSTANCE_CONNECTION_NAME,
-        "pg8000",
-        user=POSTGRES_USER,
-        password=POSTGRES_PASSWORD,
-        db=POSTGRES_DB
-    )
-    return conn
 
-# Build the SQLAlchemy engine
-engine = create_engine("postgresql+pg8000://", creator=getconn, echo=True, future=True)
+engine = create_engine(DATABASE_URI, echo=True, future=True)
 session_factory = sessionmaker(bind=engine)
 Session = scoped_session(session_factory)
 
