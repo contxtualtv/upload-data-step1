@@ -24,10 +24,16 @@ POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 POSTGRES_DB = os.getenv('POSTGRES_DB')
 POSTGRES_INSTANCE_CONNECTION_NAME = os.getenv('POSTGRES_INSTANCE_CONNECTION_NAME')
 
-print(POSTGRES_PORT, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_INSTANCE_CONNECTION_NAME, "test")
 
 if None in [POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_INSTANCE_CONNECTION_NAME]:
-    raise ValueError("Database configuration is incomplete. Please check environment variables.")
+    raise ValueError(f"""
+                     Database configuration is incomplete. Please check environment variables: 
+                     POSTGRES_USER: {POSTGRES_USER}
+                     POSTGRES_PASSWORD: {POSTGRES_PASSWORD}
+                     POSTGRES_DB: {POSTGRES_DB}
+                     POSTGRES_PORT: {POSTGRES_PORT}
+                     POSTGRES_INSTANCE_CONNECTION_NAME: {POSTGRES_INSTANCE_CONNECTION_NAME}
+                     """, )
 
 # Build the database URI
 DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@/{POSTGRES_DB}?host=/cloudsql/{POSTGRES_INSTANCE_CONNECTION_NAME}"
