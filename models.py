@@ -1,5 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, JSON
+from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime, JSON
+from sqlalchemy.dialects.postgresql import CITEXT
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -9,8 +10,8 @@ Base = declarative_base()
 class Brand(Base):
     __tablename__ = 'brand'
     id = Column(Integer, primary_key=True)
-    name = Column(String(256), nullable=False, unique=True)
-    sourceUrl = Column(String(256))
+    name = Column(CITEXT, nullable=False, unique=True)
+    sourceUrl = Column(CITEXT)
     createdAt = Column(DateTime, nullable=False, default=func.now())  # Automatically use the current time at insertion
     updatedAt = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())  # Automatically use the current time at insertion and update
 
@@ -21,13 +22,13 @@ class Brand(Base):
 class Product(Base):
     __tablename__ = 'product'
     id = Column(Integer, primary_key=True)
-    title = Column(String(255), nullable=False)
+    title = Column(CITEXT, nullable=False)
     description = Column(Text, nullable=False)
     brandId = Column(Integer, ForeignKey('brand.id'))
-    url = Column(String(255), nullable=False)
+    url = Column(CITEXT, nullable=False)
     genderId = Column(Integer, ForeignKey('gender.id'))
     retailerId = Column(Integer, nullable=False)
-    originalProductId = Column(String(255))
+    originalProductId = Column(CITEXT)
     createdAt = Column(DateTime, nullable=False, default=func.now())  # Automatically use the current time at insertion
     updatedAt = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())  # Automatically use the current time at insertion and update
 
@@ -42,9 +43,9 @@ class Product(Base):
 class Gender(Base):
     __tablename__ = 'gender'
     id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False, unique=True)
-    prettyName = Column(String(100), nullable=False)
-    description = Column(String(2000), nullable=False)
+    name = Column(CITEXT, nullable=False, unique=True)
+    prettyName = Column(CITEXT, nullable=False)
+    description = Column(CITEXT, nullable=False)
     createdAt = Column(DateTime, nullable=False, default=func.now())  # Automatically use the current time at insertion
     updatedAt = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())  # Automatically use the current time at insertion and update
 
@@ -55,7 +56,7 @@ class Gender(Base):
 class ProductCategory(Base):
     __tablename__ = 'productcategory'
     id = Column(Integer, primary_key=True)
-    name = Column(String(255), nullable=False, unique=True)
+    name = Column(CITEXT, nullable=False, unique=True)
     createdAt = Column(DateTime, nullable=False, default=func.now())  # Automatically use the current time at insertion
     updatedAt = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())  # Automatically use the current time at insertion and update
 
@@ -83,7 +84,7 @@ class Color(Base):
     __tablename__ = 'color'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255), nullable=False, unique=True)
+    name = Column(CITEXT, nullable=False, unique=True)
     createdAt = Column(DateTime, nullable=False, default=func.now())  # Automatically use the current time at insertion
     updatedAt = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())  # Automatically use the current time at insertion and update
 

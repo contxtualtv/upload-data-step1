@@ -4,10 +4,9 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from models import Product, ProductCategory, Brand, Color  # Models using SQLAlchemy ORM
 import os
 import json
-from sqlalchemy.sql import text  # Import the text function for SQL expressions
 import unicodedata
 from sqlalchemy.exc import SQLAlchemyError  # Import SQLAlchemyError
-
+from google.cloud.sql.connector import Connector
 
 # from dotenv import load_dotenv
 
@@ -18,28 +17,30 @@ from sqlalchemy.exc import SQLAlchemyError  # Import SQLAlchemyError
 app = Flask(__name__)
 
 # Now access your environment variables
-POSTGRES_PORT = os.getenv('POSTGRES_PORT')
 POSTGRES_USER = os.getenv('POSTGRES_USER')
 POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 POSTGRES_DB = os.getenv('POSTGRES_DB')
 POSTGRES_INSTANCE_CONNECTION_NAME = os.getenv('POSTGRES_INSTANCE_CONNECTION_NAME')
 
-
 if None in [POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_INSTANCE_CONNECTION_NAME]:
-    raise ValueError(f"""
-                     Database configuration is incomplete. Please check environment variables: 
-                     POSTGRES_USER: {POSTGRES_USER}
-                     POSTGRES_PASSWORD: {POSTGRES_PASSWORD}
-                     POSTGRES_DB: {POSTGRES_DB}
-                     POSTGRES_PORT: {POSTGRES_PORT}
-                     POSTGRES_INSTANCE_CONNECTION_NAME: {POSTGRES_INSTANCE_CONNECTION_NAME}
-                     """, )
+    raise ValueError("Database configuration is incomplete. Please check environment variables.")
 
-# Build the database URI
-DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@/{POSTGRES_DB}?host=/cloudsql/{POSTGRES_INSTANCE_CONNECTION_NAME}"
+# Initialize Cloud SQL Python connector
+connector = Connector()
 
+# Function to use the connector to establish the connection
+def getconn():
+    conn = connector.connect(
+        POSTGRES_INSTANCE_CONNECTION_NAME,
+        "pg8000",
+        user=POSTGRES_USER,
+        password=POSTGRES_PASSWORD,
+        db=POSTGRES_DB
+    )
+    return conn
 
-engine = create_engine(DATABASE_URI, echo=True, future=True)
+# Build the SQLAlchemy engine
+engine = create_engine("postgresql+pg8000://", creator=getconn, echo=True, future=True)
 session_factory = sessionmaker(bind=engine)
 Session = scoped_session(session_factory)
 
@@ -109,11 +110,15 @@ def check_new_products(product_batch, session):
 
 def bulk_insert_categories(categories, session: Session):
     unique_category_names = {category.lower() for category in categories}
+    print(unique_category_names, "unique_category_names")
     try:
         existing_categories = session.query(ProductCategory).filter(ProductCategory.name.in_(list(unique_category_names))).all()
+        print(existing_categories, "existing_categories")
         existing_category_names = {category.name.lower() for category in existing_categories}
+        print(existing_category_names, "existing_category_names")
 
         new_categories = [{'name': name} for name in unique_category_names if name not in existing_category_names]
+        print(new_categories, "new_categories")
         if new_categories:
             session.bulk_insert_mappings(ProductCategory, new_categories)
             session.commit()
