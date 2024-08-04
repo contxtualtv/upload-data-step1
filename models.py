@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime, JSON
+from sqlalchemy import Boolean, Column, Integer, Text, ForeignKey, DateTime, JSON
 from sqlalchemy.dialects.postgresql import CITEXT
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -29,6 +29,7 @@ class Product(Base):
     genderId = Column(Integer, ForeignKey('gender.id'))
     retailerId = Column(Integer, nullable=False)
     originalProductId = Column(CITEXT)
+    toDelete = Column(Boolean, nullable=False, default=False)
     createdAt = Column(DateTime, nullable=False, default=func.now())  # Automatically use the current time at insertion
     updatedAt = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())  # Automatically use the current time at insertion and update
 
