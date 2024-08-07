@@ -101,6 +101,8 @@ class ProductImage(Base):
     prices = Column(JSON, nullable=False)
     originalImages = Column(JSON, nullable=True)
     reuploadedImages = Column(JSON, nullable=True)
+    toDelete = Column(Boolean, nullable=False, default=False)
+
 
     # Relationships
     product = relationship("Product", back_populates="images")
